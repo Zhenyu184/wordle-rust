@@ -42,7 +42,11 @@ fn get_guess_colors(guess: &str, answer: &str, width: usize) -> Vec<Color> {
         }
 
         let char = guess_chars[i];
-        if let Some(idx) = answer_chars.iter().enumerate().position(|(j, &c)| !answer_used[j] && c == char) {
+        let found_index = answer_chars.iter().enumerate().position(|(j, &c)| {
+            !answer_used[j] && c == char
+        });
+
+        if let Some(idx) = found_index {
             colors[i] = Color::Yellow;
             answer_used[idx] = true;
         }
