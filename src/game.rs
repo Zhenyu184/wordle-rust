@@ -6,7 +6,7 @@ pub fn new() {
     let answer = answer::generate_answer();
 
     let db = database::Database::connect();
-    let id = ddb.add_game(56, &answer).expect("Failed to add game");
+    let id = db.add_game(56, &answer).expect("Failed to add game");
 
     println!("ID: {}", id);
 }
