@@ -61,6 +61,6 @@ pub fn submit(id: i64, word: &str) {
     if word == answer {
         println!("🥳 Congratulations!");
     } else {
-        println!("😵‍💫 GG");
+        println!("😵 GG");
     }
 }
