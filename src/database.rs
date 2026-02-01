@@ -62,7 +62,7 @@ impl Database {
         Ok(())
     }
 
-    fn insert_game(&self) -> Result<i64> {
+    fn insert_games(&self) -> Result<i64> {
         self.conn.execute("INSERT INTO games DEFAULT VALUES", [])?;
         Ok(self.conn.last_insert_rowid())
     }
@@ -75,25 +75,7 @@ impl Database {
         Ok(())
     }
 
-    // public
-
-    pub fn connect() -> MutexGuard<'static, Database> {
-        Self::instance().lock().unwrap()
-    }
-
-    pub fn init(&self) -> Result<()> {
-        self.create_games()?;
-        self.create_status()?;
-        Ok(())
-    }
-
-    pub fn add_game(&self, game_type: u8, answer: &str,) -> Result<i64> {
-        let id = self.insert_game()?;
-        self.insert_status(id, game_type, answer)?;
-        Ok(id)
-    }
-
-    pub fn get_games(&self) -> Result<Vec<(i64, i64, u8, bool)>> {
+    fn select_games_status(&self) -> Result<Vec<(i64, i64, u8, bool)>> {
         let mut stmt = self.conn.prepare(
             "SELECT g.id, g.time, s.type, s.is_over 
              FROM   games g 
@@ -114,6 +96,29 @@ impl Database {
             ret.push(row?);
         }
 
+        Ok(ret)
+    }
+
+    // public
+
+    pub fn connect() -> MutexGuard<'static, Database> {
+        Self::instance().lock().unwrap()
+    }
+
+    pub fn init(&self) -> Result<()> {
+        self.create_games()?;
+        self.create_status()?;
+        Ok(())
+    }
+
+    pub fn add_game(&self, game_type: u8, answer: &str,) -> Result<i64> {
+        let id = self.insert_games()?;
+        self.insert_status(id, game_type, answer)?;
+        Ok(id)
+    }
+
+    pub fn get_games(&self) -> Result<Vec<(i64, i64, u8, bool)>> {
+        let ret = self.select_games_status()?;
         Ok(ret)
     }
 
