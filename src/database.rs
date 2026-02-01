@@ -99,6 +99,30 @@ impl Database {
         Ok(ret)
     }
 
+    fn select_game_status(&self, id: i64) -> Result<(i64, i64, u8, bool, String, Option<String>)> {
+        let mut stmt = self.conn.prepare(
+            "SELECT g.id, g.time, s.type, s.is_over, s.answer, s.guesses
+             FROM   games g 
+             JOIN status s ON g.id = s.game_id
+             WHERE g.id = ?1"
+        )?;
+        
+        let mut rows = stmt.query(params![id])?;
+
+        if let Some(row) = rows.next()? {
+            Ok((
+                row.get(0)?,
+                row.get(1)?,
+                row.get(2)?,
+                row.get(3)?,
+                row.get(4)?,
+                row.get(5)?,
+            ))
+        } else {
+            Err(rusqlite::Error::QueryReturnedNoRows)
+        }
+    }
+
     // public
 
     pub fn connect() -> MutexGuard<'static, Database> {
@@ -120,6 +144,10 @@ impl Database {
     pub fn get_games(&self) -> Result<Vec<(i64, i64, u8, bool)>> {
         let ret = self.select_games_status()?;
         Ok(ret)
+    }
+
+    pub fn get_game(&self, id: i64) -> Result<(i64, i64, u8, bool, String, Option<String>)> {
+        self.select_game_status(id)
     }
 
     pub fn delete_all(&self) -> Result<()> {
