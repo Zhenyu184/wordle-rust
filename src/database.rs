@@ -35,8 +35,9 @@ impl Database {
                 id      INTEGER PRIMARY KEY AUTOINCREMENT,
                 game_id INTEGER NOT NULL,
                 type    INTEGER NOT NULL,
-                answer  TEXT NOT NULL,
+                answer  TEXT    NOT NULL,
                 guesses TEXT,
+                is_over BOOLEAN NOT NULL DEFAULT 0,
                 FOREIGN KEY(game_id) REFERENCES games(id)
             )",
             [],
