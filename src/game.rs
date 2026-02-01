@@ -36,11 +36,6 @@ pub fn clean() {
 
 pub fn submit(id: i64, word: &str) {
     let word = word.to_lowercase();
-    if word.len() != 5 {
-        println!("Word must be 5 characters long");
-        return;
-    }
-    
     let db = database::Database::connect();
     if let Ok((_, _, _, is_over, answer, guesses)) = db.get_game(id) {
         if is_over {

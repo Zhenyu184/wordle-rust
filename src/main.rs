@@ -22,6 +22,10 @@ fn main() {
             let id_str = arg_matches.value_of("id").unwrap();
             let id: i64 = id_str.parse().expect("Invalid ID: must be a integer");
             let word = arg_matches.value_of("word").unwrap();
+            if word.len() != 5 || !word.chars().all(|c| c.is_ascii_alphabetic()) {
+                println!("Word must be 5 English letters");
+                return;
+            }
             game::submit(id, word);
         },
         _ => {},
