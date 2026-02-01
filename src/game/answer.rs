@@ -1,6 +1,6 @@
 use std::time::SystemTime;
 
-pub fn generate_answer(length: u8) -> String {
+pub fn generate(length: u8) -> String {
     let content = include_str!("../../words/words.txt");
     let words: Vec<&str> = content
         .lines()

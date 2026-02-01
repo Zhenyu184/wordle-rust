@@ -3,7 +3,8 @@ mod answer;
 use crate::database;
 
 pub fn new() {
-    let answer = answer::generate_answer(5);
+    let length: u8 = 5;
+    let answer = answer::generate(length);
 
     let db = database::Database::connect();
     let id = db.add_game(56, &answer).expect("Failed to add game");
