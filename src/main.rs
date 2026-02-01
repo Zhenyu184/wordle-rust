@@ -13,6 +13,7 @@ fn main() {
 
     match matches.subcommand_name() {
         Some("new") => game::new(),
+        Some("list") => game::list(),
         Some("show") => show(),
         _ => {},
     }

@@ -63,4 +63,28 @@ impl Database {
         
         Ok(id)
     }
+
+    pub fn list_games(&self) -> Result<Vec<(i64, i64, u8, bool)>> {
+        let mut stmt = self.conn.prepare(
+            "SELECT g.id, g.time, s.type, s.is_over 
+             FROM   games g 
+             JOIN status s ON g.id = s.game_id"
+        )?;
+        
+        let rows = stmt.query_map([], |row| {
+            Ok((
+                row.get(0)?,
+                row.get(1)?,
+                row.get(2)?,
+                row.get(3)?,
+            ))
+        })?;
+
+        let mut ret = Vec::new();
+        for row in rows {
+            ret.push(row?);
+        }
+
+        Ok(ret)
+    }
 }
