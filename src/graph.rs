@@ -87,9 +87,7 @@ pub fn show(id: i64) {
     let data = db.get_status(id);
 
     match data {
-        Ok((id, _, _type, is_over, answer, guesses)) => {
-            println!("ID:      {}", id);
-            println!("Type:    {}", _type);
+        Ok((_, _, _type, is_over, answer, guesses)) => {
             println!("Status:  {}", if is_over { "over" } else { "active" });
             draw_board(_type, guesses, &answer);
         },
