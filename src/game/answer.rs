@@ -13,8 +13,8 @@ pub fn generate(length: u8) -> String {
     }
 
     let now = SystemTime::now();
-    let since_the_epoch = now.duration_since(SystemTime::UNIX_EPOCH).unwrap_or_default();
-    let seed = since_the_epoch.as_nanos();
+    let epoch = now.duration_since(SystemTime::UNIX_EPOCH).unwrap_or_default();
+    let seed = epoch.as_nanos();
     let index = (seed as usize) % words.len();
 
     words[index].to_string()

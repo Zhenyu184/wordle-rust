@@ -170,14 +170,15 @@ impl Database {
         Ok(game)
     }
 
-    pub fn append_guesses(&self, game_id: i64, new_guess: &str) -> Result<()> {
+    pub fn append_guesses(&self, game_id: i64, guess: &str) -> Result<()> {
         let (_, _, _, _, _, guesses) = self.select_status(game_id)?;
-        let mut new_guesses = guesses.unwrap_or_default();
-        if !new_guesses.is_empty() {
-            new_guesses.push(',');
+        let mut guesses = guesses.unwrap_or_default();
+        if !guesses.is_empty() {
+            guesses.push(',');
         }
-        new_guesses.push_str(new_guess);
-        self.update_guesses_in_status(game_id, &new_guesses)
+        
+        guesses.push_str(guess);
+        self.update_guesses_in_status(game_id, &guesses)
     }
 
     pub fn set_game_over(&self, game_id: i64) -> Result<()> {
