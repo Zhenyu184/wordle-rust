@@ -37,19 +37,30 @@ pub fn clean() {
 pub fn submit(id: i64, word: &str) {
     let word = word.to_lowercase();
     let db = database::Database::connect();
-    if let Ok((_, _, _, is_over, answer, guesses)) = db.get_status(id) {
-        if is_over {
-            println!("Game is already over");
-            return;
-        }
-
-        db.append_guesses(id, &word).expect("Failed to append guesses");
-
-        let guess_count = guesses.as_deref().unwrap_or("").split(',').filter(|s| !s.is_empty()).count() + 1;
-
-        if word == answer || guess_count >= 6 {
-            db.set_game_over(id).expect("Failed to set game over");
-        }
-    }
     
+    let Ok((_, _, _, is_over, answer, guesses)) = db.get_status(id) else {
+        println!("Game ID {} not found", id);
+        return;
+    };
+
+    if is_over {
+        println!("Game is already over");
+        return;
+    }
+
+    db.append_guesses(id, &word).expect("Failed to append guesses");
+
+    let guess_count = guesses.as_deref().unwrap_or("").split(',').filter(|s| !s.is_empty()).count() + 1;
+
+    if word != answer && guess_count < 6 {
+        return;
+    }
+
+    db.set_game_over(id).expect("Failed to set game over");
+
+    if word == answer {
+        println!("🥳 Congratulations!");
+    } else {
+        println!("😵‍💫 GG");
+    }
 }
