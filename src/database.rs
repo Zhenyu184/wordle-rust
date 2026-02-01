@@ -29,6 +29,17 @@ impl Database {
             )",
             [],
         )?;
+        
+        self.conn.execute(
+            "CREATE TABLE IF NOT EXISTS status (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                game_id INTEGER NOT NULL,
+                answer TEXT NOT NULL,
+                guesses TEXT,
+                FOREIGN KEY(game_id) REFERENCES games(id)
+            )",
+            [],
+        )?;
         Ok(())
     }
 }
