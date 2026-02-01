@@ -25,22 +25,26 @@ fn get_guess_colors(guess: &str, answer: &str, width: usize) -> Vec<Color> {
 
     // correct position(green)
     for i in 0..width {
-        if i < guess_chars.len() && i < answer_chars.len() {
-            if guess_chars[i] == answer_chars[i] {
-                colors[i] = Color::Green;
-                answer_used[i] = true;
-            }
+        if i >= guess_chars.len() || i >= answer_chars.len() {
+            continue;
+        }
+
+        if guess_chars[i] == answer_chars[i] {
+            colors[i] = Color::Green;
+            answer_used[i] = true;
         }
     }
 
     // wrong position(yellow)
     for i in 0..width {
-        if colors[i] == Color::Reset && i < guess_chars.len() {
-            let char = guess_chars[i];
-            if let Some(idx) = answer_chars.iter().enumerate().position(|(j, &c)| !answer_used[j] && c == char) {
-                colors[i] = Color::Yellow;
-                answer_used[idx] = true;
-            }
+        if colors[i] != Color::Reset || i >= guess_chars.len() {
+            continue;
+        }
+
+        let char = guess_chars[i];
+        if let Some(idx) = answer_chars.iter().enumerate().position(|(j, &c)| !answer_used[j] && c == char) {
+            colors[i] = Color::Yellow;
+            answer_used[idx] = true;
         }
     }
     
