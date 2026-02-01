@@ -1,5 +1,5 @@
-use std::sync::{Mutex, OnceLock};
 use rusqlite::{Connection, Result};
+use std::sync::{Mutex, MutexGuard, OnceLock};
 
 pub struct Database {
     conn: Connection,
@@ -8,21 +8,24 @@ pub struct Database {
 static DB: OnceLock<Mutex<Database>> = OnceLock::new();
 
 impl Database {
-    pub fn client() -> &'static Mutex<Database> {
-        DB.get_or_init(|| Mutex::new(Database::new().expect("Failed to connect to database")))
-    }
-
     fn new() -> Result<Self> {
         let conn = Connection::open("wordle.db")?;
         Ok(Database { conn })
+    }
+    
+    fn instance() -> &'static Mutex<Database> {
+        DB.get_or_init(|| Mutex::new(Database::new().expect("Failed to connect to database")))
+    }
+
+    pub fn connect() -> MutexGuard<'static, Database> {
+        Self::instance().lock().unwrap()
     }
 
     pub fn init(&self) -> Result<()> {
         self.conn.execute(
             "CREATE TABLE IF NOT EXISTS games (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                answer TEXT NOT NULL,
-                created_at INTEGER DEFAULT (strftime('%s', 'now'))
+                id   INTEGER PRIMARY KEY AUTOINCREMENT,
+                time INTEGER DEFAULT (unixepoch())
             )",
             [],
         )?;
