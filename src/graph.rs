@@ -1,6 +1,5 @@
 use crate::database;
 
-
 fn draw_board(game_type: u8, guesses: Option<String>) {
     let (width, height) = if game_type == 56 { (5, 6) } else { (5, 6) };
 

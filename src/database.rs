@@ -1,8 +1,6 @@
 use std::sync::{Mutex, MutexGuard, OnceLock};
 use rusqlite::{params, Connection, Result};
 
-
-
 pub struct Database {
     conn: Connection,
 }
