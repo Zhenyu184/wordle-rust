@@ -147,7 +147,8 @@ impl Database {
     }
 
     pub fn get_game(&self, id: i64) -> Result<(i64, i64, u8, bool, String, Option<String>)> {
-        self.select_game_status(id)
+        let game = self.select_game_status(id)?;
+        Ok(game)
     }
 
     pub fn delete_all(&self) -> Result<()> {
