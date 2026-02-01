@@ -83,7 +83,6 @@ pub fn show(id: i64) {
             println!("ID:      {}", id);
             println!("Type:    {}", _type);
             println!("Status:  {}", if is_over { "over" } else { "active" });
-            println!("Answer:  {}", answer);
             draw_board(_type, guesses, &answer);
         },
         Err(_) => println!("Game {} not found", id),
