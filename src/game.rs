@@ -15,6 +15,11 @@ pub fn list() {
     let db = database::Database::connect();
     let games = db.get_games().expect("Failed to list games");
 
+    if games.is_empty() {
+        println!("list is empty");
+        return;
+    }
+
     println!("{:<5} {:<10} {:<10} {:<15}", "ID", "Type", "Status", "Time");
     for (id, time, game_type, is_over) in games {
         let status = if is_over { "Done" } else { "Active" };
