@@ -20,13 +20,7 @@ impl Database {
         DB.get_or_init(|| Mutex::new(Database::new().expect("Failed to connect to database")))
     }
 
-    // public
-
-    pub fn connect() -> MutexGuard<'static, Database> {
-        Self::instance().lock().unwrap()
-    }
-
-    pub fn init(&self) -> Result<()> {
+    fn create_games(&self) -> Result<()> {
         self.conn.execute(
             "CREATE TABLE IF NOT EXISTS games (
                 id   INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -34,7 +28,15 @@ impl Database {
             )",
             [],
         )?;
-        
+        Ok(())
+    }
+
+    fn delete_games(&self) -> Result<()> {
+        self.conn.execute("DELETE FROM games", [])?;
+        Ok(())
+    }
+
+    fn create_status(&self) -> Result<()> {
         self.conn.execute(
             "CREATE TABLE IF NOT EXISTS status (
                 id      INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -47,25 +49,47 @@ impl Database {
             )",
             [],
         )?;
+        Ok(())
+    }
 
+    fn delete_status(&self) -> Result<()> {
+        self.conn.execute("DELETE FROM status", [])?;
+        Ok(())
+    }
+
+    fn delete_sqlite_sequence(&self) -> Result<()> {
+        self.conn.execute("DELETE FROM sqlite_sequence", [])?;
+        Ok(())
+    }
+
+    fn insert_game(&self) -> Result<i64> {
+        self.conn.execute("INSERT INTO games DEFAULT VALUES", [])?;
+        Ok(self.conn.last_insert_rowid())
+    }
+
+    fn insert_status(&self, game_id: i64, game_type: u8, answer: &str) -> Result<()> {
+        self.conn.execute(
+            "INSERT INTO status (game_id, type, answer) VALUES (?1, ?2, ?3)",
+            params![game_id, game_type, answer],
+        )?;
+        Ok(())
+    }
+
+    // public
+
+    pub fn connect() -> MutexGuard<'static, Database> {
+        Self::instance().lock().unwrap()
+    }
+
+    pub fn init(&self) -> Result<()> {
+        self.create_games()?;
+        self.create_status()?;
         Ok(())
     }
 
     pub fn add_game(&self, game_type: u8, answer: &str,) -> Result<i64> {
-        self.conn.execute(
-            "INSERT INTO games DEFAULT VALUES", []
-        )?;
-
-        let id = self.conn.last_insert_rowid();
-        self.conn.execute(
-            "INSERT INTO status (
-                game_id,
-                type,
-                answer
-            ) VALUES (?1, ?2, ?3)",
-            params![id, game_type, answer],
-        )?;
-        
+        let id = self.insert_game()?;
+        self.insert_status(id, game_type, answer)?;
         Ok(id)
     }
 
@@ -94,9 +118,9 @@ impl Database {
     }
 
     pub fn delete_all(&self) -> Result<()> {
-        self.conn.execute("DELETE FROM status", [])?;
-        self.conn.execute("DELETE FROM games", [])?;
-        self.conn.execute("DELETE FROM sqlite_sequence", [])?;
+        self.delete_games()?;
+        self.delete_status()?;
+        self.delete_sqlite_sequence()?;
         Ok(())
     }
 }
