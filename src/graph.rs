@@ -27,7 +27,7 @@ fn draw_board(game_type: u8, guesses: Option<String>) {
 
 pub fn show(id: i64) {
     let db = database::Database::connect();
-    let data = db.get_game(id);
+    let data = db.get_status(id);
 
     match data {
         Ok((id, _, _type, is_over, answer, guesses)) => {

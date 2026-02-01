@@ -75,7 +75,7 @@ impl Database {
         Ok(())
     }
 
-    fn select_games_status(&self) -> Result<Vec<(i64, i64, u8, bool)>> {
+    fn select_games(&self) -> Result<Vec<(i64, i64, u8, bool)>> {
         let mut stmt = self.conn.prepare(
             "SELECT g.id, g.time, s.type, s.is_over 
              FROM   games g 
@@ -99,7 +99,7 @@ impl Database {
         Ok(ret)
     }
 
-    fn select_game_status(&self, id: i64) -> Result<(i64, i64, u8, bool, String, Option<String>)> {
+    fn select_status(&self, id: i64) -> Result<(i64, i64, u8, bool, String, Option<String>)> {
         let mut stmt = self.conn.prepare(
             "SELECT g.id, g.time, s.type, s.is_over, s.answer, s.guesses
              FROM   games g 
@@ -158,17 +158,17 @@ impl Database {
     }
 
     pub fn get_games(&self) -> Result<Vec<(i64, i64, u8, bool)>> {
-        let ret = self.select_games_status()?;
+        let ret = self.select_games()?;
         Ok(ret)
     }
 
-    pub fn get_game(&self, id: i64) -> Result<(i64, i64, u8, bool, String, Option<String>)> {
-        let game = self.select_game_status(id)?;
+    pub fn get_status(&self, id: i64) -> Result<(i64, i64, u8, bool, String, Option<String>)> {
+        let game = self.select_status(id)?;
         Ok(game)
     }
 
     pub fn append_guesses(&self, game_id: i64, new_guess: &str) -> Result<()> {
-        let (_, _, _, _, _, guesses) = self.select_game_status(game_id)?;
+        let (_, _, _, _, _, guesses) = self.select_status(game_id)?;
         let mut new_guesses = guesses.unwrap_or_default();
         if !new_guesses.is_empty() {
             new_guesses.push(',');
