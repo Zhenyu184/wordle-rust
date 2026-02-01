@@ -1,4 +1,4 @@
-use rusqlite::{Connection, Result};
+use rusqlite::{params, Connection, Result};
 use std::sync::{Mutex, MutexGuard, OnceLock};
 
 pub struct Database {
@@ -40,6 +40,21 @@ impl Database {
             )",
             [],
         )?;
+
         Ok(())
+    }
+
+    pub fn add_game(&self, answer: &str) -> Result<i64> {
+        self.conn.execute(
+            "INSERT INTO games DEFAULT VALUES", []
+        )?;
+
+        let id = self.conn.last_insert_rowid();
+        self.conn.execute(
+            "INSERT INTO status (game_id, answer) VALUES (?1, ?2)",
+            params![id, answer],
+        )?;
+        
+        Ok(id)
     }
 }
