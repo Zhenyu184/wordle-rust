@@ -1,4 +1,5 @@
 mod cli;
+mod database;
 mod game;
 
 fn show() {
@@ -7,6 +8,8 @@ fn show() {
 
 fn main() {
     let matches = cli::build_cli().get_matches();
+
+    database::Database::client().lock().unwrap().init().expect("Failed to initialize database");
 
     match matches.subcommand_name() {
         Some("new") => game::new(),
