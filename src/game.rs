@@ -16,7 +16,7 @@ pub fn list() {
     let games = db.get_games().expect("Failed to list games");
 
     if games.is_empty() {
-        println!("list is empty");
+        println!("List is empty");
         return;
     }
 
