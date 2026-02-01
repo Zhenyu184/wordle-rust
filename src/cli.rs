@@ -15,6 +15,9 @@ pub fn build_cli() -> App<'static, 'static> {
         .about("Wordle game")
         .setting(AppSettings::DeriveDisplayOrder)
         .subcommand(
+            App::new("new").about("Starts new game")
+        )
+        .subcommand(
             App::new("list").about("List games")
         )
         .subcommand(
@@ -25,9 +28,6 @@ pub fn build_cli() -> App<'static, 'static> {
         .subcommand(
             App::new("clean").about("clean all games")
                 .arg(arg_id()),
-        )
-        .subcommand(
-            App::new("start").about("Starts new game")
         )
         .subcommand(
             App::new("submit").about("summit the answer")

@@ -1,7 +1,7 @@
 mod cli;
 mod game;
 
-fn check_word() {
+fn show() {
     println!("Check command!");
 }
 
@@ -9,8 +9,8 @@ fn main() {
     let matches = cli::build_cli().get_matches();
 
     match matches.subcommand_name() {
-        Some("start") => game::start_game(),
-        Some("check") => check_word(),
+        Some("new") => game::new(),
+        Some("show") => show(),
         _ => {},
     }
 }
