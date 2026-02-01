@@ -52,7 +52,11 @@ impl Database {
 
         let id = self.conn.last_insert_rowid();
         self.conn.execute(
-            "INSERT INTO status (game_id, type, answer) VALUES (?1, ?2, ?3)",
+            "INSERT INTO status (
+                game_id,
+                type,
+                answer
+            ) VALUES (?1, ?2, ?3)",
             params![id, game_type, answer],
         )?;
         
