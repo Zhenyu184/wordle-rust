@@ -1,9 +1,10 @@
 [package]
 name = "wordle_rust"
-version = "0.1.0"
+version = "0.0.2"
 edition = "2024"
 
 [dependencies]
 clap = "2"
 regex = "1"
-rusqlite = "0.38.0"
+base64 = "0.22"
+rusqlite = "0.38"

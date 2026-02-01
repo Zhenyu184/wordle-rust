@@ -1,4 +1,5 @@
 mod cli;
+mod misc;
 mod game;
 mod graph;
 mod database;

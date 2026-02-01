@@ -1,6 +1,8 @@
 use std::sync::{Mutex, MutexGuard, OnceLock};
 use rusqlite::{params, Connection, Result};
 
+
+
 pub struct Database {
     conn: Connection,
 }
@@ -68,9 +70,10 @@ impl Database {
     }
 
     fn insert_status(&self, game_id: i64, game_type: u8, answer: &str) -> Result<()> {
+        let encrypted_answer = crate::misc::encrypt(answer);
         self.conn.execute(
             "INSERT INTO status (game_id, type, answer) VALUES (?1, ?2, ?3)",
-            params![game_id, game_type, answer],
+            params![game_id, game_type, encrypted_answer],
         )?;
         Ok(())
     }
@@ -110,12 +113,14 @@ impl Database {
         let mut rows = stmt.query(params![id])?;
 
         if let Some(row) = rows.next()? {
+            let answer: String = row.get(4)?;
+            let decrypted_answer = crate::misc::decrypt(&answer);
             Ok((
                 row.get(0)?,
                 row.get(1)?,
                 row.get(2)?,
                 row.get(3)?,
-                row.get(4)?,
+                decrypted_answer,
                 row.get(5)?,
             ))
         } else {
