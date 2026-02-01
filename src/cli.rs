@@ -17,7 +17,7 @@ fn arg_word() -> Arg {
 
 pub fn build_cli() -> Command {
     Command::new("wordle_rust")
-        .version("0.1")
+        .version("0.1.0")
         .about("Wordle game")
         .subcommand(
             Command::new("new").about("Starts new game")
