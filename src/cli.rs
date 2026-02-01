@@ -27,7 +27,6 @@ pub fn build_cli() -> App<'static, 'static> {
         )
         .subcommand(
             App::new("clean").about("clean all games")
-                .arg(arg_id()),
         )
         .subcommand(
             App::new("submit").about("summit the answer")

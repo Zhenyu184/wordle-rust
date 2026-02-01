@@ -14,6 +14,7 @@ fn main() {
     match matches.subcommand_name() {
         Some("new") => game::new(),
         Some("list") => game::list(),
+        Some("clean") => game::clean(),
         Some("show") => show(),
         _ => {},
     }

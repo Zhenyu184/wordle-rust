@@ -1,5 +1,5 @@
-use rusqlite::{params, Connection, Result};
 use std::sync::{Mutex, MutexGuard, OnceLock};
+use rusqlite::{params, Connection, Result};
 
 pub struct Database {
     conn: Connection,
@@ -8,6 +8,9 @@ pub struct Database {
 static DB: OnceLock<Mutex<Database>> = OnceLock::new();
 
 impl Database {
+
+    // private
+
     fn new() -> Result<Self> {
         let conn = Connection::open("wordle.db")?;
         Ok(Database { conn })
@@ -16,6 +19,8 @@ impl Database {
     fn instance() -> &'static Mutex<Database> {
         DB.get_or_init(|| Mutex::new(Database::new().expect("Failed to connect to database")))
     }
+
+    // public
 
     pub fn connect() -> MutexGuard<'static, Database> {
         Self::instance().lock().unwrap()
@@ -64,7 +69,7 @@ impl Database {
         Ok(id)
     }
 
-    pub fn list_games(&self) -> Result<Vec<(i64, i64, u8, bool)>> {
+    pub fn get_games(&self) -> Result<Vec<(i64, i64, u8, bool)>> {
         let mut stmt = self.conn.prepare(
             "SELECT g.id, g.time, s.type, s.is_over 
              FROM   games g 
@@ -86,5 +91,12 @@ impl Database {
         }
 
         Ok(ret)
+    }
+
+    pub fn delete_all(&self) -> Result<()> {
+        self.conn.execute("DELETE FROM status", [])?;
+        self.conn.execute("DELETE FROM games", [])?;
+        self.conn.execute("DELETE FROM sqlite_sequence", [])?;
+        Ok(())
     }
 }
