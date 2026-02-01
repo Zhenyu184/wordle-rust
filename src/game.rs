@@ -4,13 +4,16 @@ use crate::database;
 
 pub fn new() {
     let answer = answer::generate_answer();
-    let id = database::Database::connect().add_game(56, &answer).expect("Failed to add game");
+
+    let db = database::Database::connect();
+    let id = ddb.add_game(56, &answer).expect("Failed to add game");
 
     println!("ID: {}", id);
 }
 
 pub fn list() {
-    let games = database::Database::connect().get_games().expect("Failed to list games");
+    let db = database::Database::connect();
+    let games = db.get_games().expect("Failed to list games");
 
     println!("{:<5} {:<10} {:<10} {:<15}", "ID", "Type", "Status", "Time");
     for (id, time, game_type, is_over) in games {
@@ -20,6 +23,33 @@ pub fn list() {
 }
 
 pub fn clean() {
-    database::Database::connect().delete_all().expect("Failed to clean database");
+    let db = database::Database::connect();
+    db.delete_all().expect("Failed to clean database");
+    
     println!("All data cleaned");
+}
+
+pub fn submit(id: i64, word: &str) {
+    let word = word.to_lowercase();
+    if word.len() != 5 {
+        println!("Word must be 5 characters long");
+        return;
+    }
+    
+    let db = database::Database::connect();
+    if let Ok((_, _, _, is_over, answer, guesses)) = db.get_game(id) {
+        if is_over {
+            println!("Game is already over");
+            return;
+        }
+
+        db.append_guesses(id, &word).expect("Failed to append guesses");
+
+        let guess_count = guesses.as_deref().unwrap_or("").split(',').filter(|s| !s.is_empty()).count() + 1;
+
+        if word == answer || guess_count >= 6 {
+            db.set_game_over(id).expect("Failed to set game over");
+        }
+    }
+    
 }

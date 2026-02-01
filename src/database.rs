@@ -123,6 +123,22 @@ impl Database {
         }
     }
 
+    fn update_guesses_in_status(&self, game_id: i64, guesses: &str) -> Result<()> {
+        self.conn.execute(
+            "UPDATE status SET guesses = ?1 WHERE game_id = ?2",
+            params![guesses, game_id],
+        )?;
+        Ok(())
+    }
+
+    fn update_over_in_status(&self, game_id: i64, is_over: bool) -> Result<()> {
+        self.conn.execute(
+            "UPDATE status SET is_over = ?1 WHERE game_id = ?2",
+            params![is_over, game_id],
+        )?;
+        Ok(())
+    }
+
     // public
 
     pub fn connect() -> MutexGuard<'static, Database> {
@@ -149,6 +165,20 @@ impl Database {
     pub fn get_game(&self, id: i64) -> Result<(i64, i64, u8, bool, String, Option<String>)> {
         let game = self.select_game_status(id)?;
         Ok(game)
+    }
+
+    pub fn append_guesses(&self, game_id: i64, new_guess: &str) -> Result<()> {
+        let (_, _, _, _, _, guesses) = self.select_game_status(game_id)?;
+        let mut new_guesses = guesses.unwrap_or_default();
+        if !new_guesses.is_empty() {
+            new_guesses.push(',');
+        }
+        new_guesses.push_str(new_guess);
+        self.update_guesses_in_status(game_id, &new_guesses)
+    }
+
+    pub fn set_game_over(&self, game_id: i64) -> Result<()> {
+        self.update_over_in_status(game_id, true)
     }
 
     pub fn delete_all(&self) -> Result<()> {

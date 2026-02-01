@@ -9,6 +9,13 @@ fn arg_id() -> Arg<'static, 'static> {
         .takes_value(true)
 }
 
+fn arg_word() -> Arg<'static, 'static> {
+    Arg::with_name("word")
+        .help("The word to guess")
+        .required(true)
+        .index(1)
+}
+
 pub fn build_cli() -> App<'static, 'static> {
     App::new("wordle_rust")
         .version("0.1")
@@ -30,6 +37,7 @@ pub fn build_cli() -> App<'static, 'static> {
         )
         .subcommand(
             App::new("submit").about("summit the answer")
-                .arg(arg_id()),
+                .arg(arg_id())
+                .arg(arg_word()),
         )
 }

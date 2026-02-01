@@ -15,8 +15,14 @@ fn main() {
         ("clean", _) => game::clean(),
         ("show", Some(arg_matches)) => {
             let id_str = arg_matches.value_of("id").unwrap();
-            let id: i64 = id_str.parse().expect("Invalid ID: must be a valid i64 integer");
+            let id: i64 = id_str.parse().expect("Invalid ID: must be a integer");
             graph::show(id);
+        },
+        ("submit", Some(arg_matches)) => {
+            let id_str = arg_matches.value_of("id").unwrap();
+            let id: i64 = id_str.parse().expect("Invalid ID: must be a integer");
+            let word = arg_matches.value_of("word").unwrap();
+            game::submit(id, word);
         },
         _ => {},
     }
