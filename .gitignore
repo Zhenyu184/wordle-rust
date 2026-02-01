@@ -2,4 +2,7 @@ target
 Cargo.lock
 
 .DS_Store
-.db
+
+*.db
+*.tmp
+*.log
