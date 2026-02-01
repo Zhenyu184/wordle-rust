@@ -22,7 +22,7 @@ pub fn list() {
 
     println!("{:<5} {:<10} {:<10} {:<15}", "ID", "Type", "Status", "Time");
     for (id, time, game_type, is_over) in games {
-        let status = if is_over { "Done" } else { "Active" };
+        let status = if is_over { "over" } else { "active" };
         println!("{:<5} {:<10} {:<10} {:<15}", id, game_type, status, time);
     }
 }
