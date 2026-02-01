@@ -4,7 +4,7 @@ version = "0.0.2"
 edition = "2024"
 
 [dependencies]
-clap = "2"
-regex = "1"
+clap = "4.5"
+regex = "1.12"
 base64 = "0.22"
 rusqlite = "0.38"

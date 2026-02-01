@@ -11,18 +11,18 @@ fn main() {
     let matches = cli::build_cli().get_matches();
     
     match matches.subcommand() {
-        ("new",   _) => game::new(),
-        ("list",  _) => game::list(),
-        ("clean", _) => game::clean(),
-        ("show", Some(arg_matches)) => {
-            let id_str = arg_matches.value_of("id").unwrap();
+        Some(("new",   _)) => game::new(),
+        Some(("list",  _)) => game::list(),
+        Some(("clean", _)) => game::clean(),
+        Some(("show", arg_matches)) => {
+            let id_str = arg_matches.get_one::<String>("id").unwrap();
             let id: i64 = id_str.parse().expect("Invalid ID: must be a integer");
             graph::show(id);
         },
-        ("submit", Some(arg_matches)) => {
-            let id_str = arg_matches.value_of("id").unwrap();
+        Some(("submit", arg_matches)) => {
+            let id_str = arg_matches.get_one::<String>("id").unwrap();
             let id: i64 = id_str.parse().expect("Invalid ID: must be a integer");
-            let word = arg_matches.value_of("word").unwrap();
+            let word = arg_matches.get_one::<String>("word").unwrap();
             if word.len() != 5 || !word.chars().all(|c| c.is_ascii_alphabetic()) {
                 println!("Word must be 5 English letters");
                 return;

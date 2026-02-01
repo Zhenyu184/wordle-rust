@@ -1,42 +1,40 @@
-use clap::{App, Arg, AppSettings};
+use clap::{Arg, Command};
 
-fn arg_id() -> Arg<'static, 'static> {
-    Arg::with_name("id")
+fn arg_id() -> Arg {
+    Arg::new("id")
         .help("The game ID")
         .long("id")
-        .short("i")
+        .short('i')
         .required(true)
-        .takes_value(true)
 }
 
-fn arg_word() -> Arg<'static, 'static> {
-    Arg::with_name("word")
+fn arg_word() -> Arg {
+    Arg::new("word")
         .help("The word to guess")
         .required(true)
         .index(1)
 }
 
-pub fn build_cli() -> App<'static, 'static> {
-    App::new("wordle_rust")
+pub fn build_cli() -> Command {
+    Command::new("wordle_rust")
         .version("0.1")
         .about("Wordle game")
-        .setting(AppSettings::DeriveDisplayOrder)
         .subcommand(
-            App::new("new").about("Starts new game")
+            Command::new("new").about("Starts new game")
         )
         .subcommand(
-            App::new("list").about("List games")
+            Command::new("list").about("List games")
         )
         .subcommand(
-            App::new("show")
+            Command::new("show")
                 .about("Show game current status")
                 .arg(arg_id()),
         )
         .subcommand(
-            App::new("clean").about("clean all games")
+            Command::new("clean").about("clean all games")
         )
         .subcommand(
-            App::new("submit").about("summit the answer")
+            Command::new("submit").about("summit the answer")
                 .arg(arg_id())
                 .arg(arg_word()),
         )
